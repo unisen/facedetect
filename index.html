@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Face Recognition Camera</title>
+</head>
+
+<body>
+    <h1>Face Recognition Camera</h1>
+
+    <!-- Video element for live camera feed -->
+    <video id="video" width="640" height="480" autoplay></video>
+    <button id="capture">Capture Image</button>
+
+    <script>
+        // Access the user's camera
+        navigator.mediaDevices.getUserMedia({
+                video: true
+            })
+            .then(function(stream) {
+                var video = document.getElementById('video');
+                video.srcObject = stream;
+            })
+            .catch(function(err) {
+                console.log("Error accessing the camera: " + err);
+            });
+
+        // Capture image from the video
+        document.getElementById('capture').addEventListener('click', function() {
+            var canvas = document.createElement('canvas');
+            var video = document.getElementById('video');
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            canvas.getContext('2d').drawImage(video, 0, 0);
+            var dataURL = canvas.toDataURL('image/png');
+
+            // Send the captured image to the server
+            fetch('upload_image.php', {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        image: dataURL
+                    }),
+                    headers: {
+                        //'Content-Type': 'text/html; charset=utf-8'
+                        'Content-Type': 'application/json'
+                    }
+                }).then(response => response.text())
+                .then(result => alert(result))
+                .catch(error => console.log('Error:', error));
+        });
+    </script>
+</body>
+
+</html>
