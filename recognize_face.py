@@ -11,3 +11,5 @@ result = DeepFace.verify(
 
 print(result)
 #time.sleep(3)
+
+# py recognize_face.py "images/mulher.jpg" "images/1.png"        
